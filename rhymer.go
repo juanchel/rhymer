@@ -16,6 +16,30 @@ func (r *rhymer) Pronounce(s string) [][]string {
     return r.dictionary[strings.ToUpper(s)]
 }
 
+func (r *rhymer) FindRhymesByWord(s string) []string {
+    s = strings.ToUpper(s)
+    if _, ok := r.dictionary[s]; !ok {
+        return []string{}
+    }
+    return r.FindRhymes(r.dictionary[strings.ToUpper(s)][0])
+}
+
+func (r *rhymer) FindRhymes(s []string) []string {
+    var words []string
+    toRhyme := s[vowelOffset(s):]
+    minLen := len(toRhyme)
+
+    for k, v := range r.dictionary {
+        if len(v[0]) < minLen {
+            continue
+        }
+        if rhymeTo(v[0], toRhyme) {
+            words = append(words, k)
+        }
+    }
+    return words
+}
+
 func (r *rhymer) Rhymes(s1, s2 string) int {
     s1 = strings.ToUpper(s1)
     s2 = strings.ToUpper(s2)
@@ -27,7 +51,7 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
 
     for _, v := range r.Pronounce(s1) {
         for _, w := range r.Pronounce(s2) {
-            if pronounceRhymes(v, w) {
+            if rhymeToUnordered(v, w) {
                 rhymes = 1
             }
         }
@@ -35,20 +59,37 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
     return rhymes
 }
 
-func vowelSound(s string) bool {
-    switch s[0] {
-    case 'A', 'E', 'I', 'O', 'U':
-        return true
-    default:
-        return false
+func vowelOffset(s []string) int {
+    for i, v := range s {
+        switch v[0] {
+            case 'A', 'E', 'I', 'O', 'U':
+                return i
+        }
     }
+    return -1
 }
 
-func pronounceRhymes(a1, a2 []string) bool {
-    // Find the shorter word
+func rhymeTo(l, s []string) bool {
+    diff := len(l) - len(s)
+    ret := true
+
+    offset := vowelOffset(s)
+
+    // Check if the words sound the same, ignoring the first constanant sounds of the shorter word
+    for i, v := range s[offset:] {
+        if l[diff+i+offset] != v {
+            ret = false
+        }
+    }
+
+    return ret
+}
+
+func rhymeToUnordered(a1, a2 []string) bool {
+    // Find the word with less rhymable phonemes
     var longer []string
     var shorter []string
-    if len(a1) > len(a2) {
+    if len(a1)-vowelOffset(a1) > len(a2)-vowelOffset(a2) {
         longer = a1
         shorter = a2
     } else {
@@ -56,24 +97,8 @@ func pronounceRhymes(a1, a2 []string) bool {
         shorter = a1
     }
 
-    diff := len(longer) - len(shorter)
-    full := true
+    return rhymeTo(longer, shorter)
 
-    offset := 1
-
-    // We need to match the entire shorter word if it starts with a vowel
-    if vowelSound(shorter[0]) {
-        offset = 0
-    }
-
-    // Check if the words sound the same, ignoring the first constanant sound of the shorter word
-    for i, v := range shorter[offset:] {
-        if longer[diff+i+offset] != v {
-            full = false
-        }
-    }
-
-    return full
 }
 
 func check(e error) {
