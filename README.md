@@ -9,16 +9,20 @@ Simple rhyming dictionary written in golang, powered by CMU's pronouncing dictio
     func main() {
       r = rhymer.Rhymer()
       
-      // Returns an array of arrays of strings that represents the phonemes of possible pronounciations of "accept"
-      // For "accept", it will returns [[AE K S EH P T][AH K S EH P T]]
-      // See the README for the cmudict for more information about the phonemes
+      // returns [[AE K S EH P T][AH K S EH P T]]
+      // See the cmudict README for more information
       r.Pronounce("accept")
       
-      // Returns 1 when the words rhyme, 0 when they dont, and -1 when the rhymer doesn't know one of the words
+      // Returns 1 because cat and bat rhyme
       r.Rhymes("cat", "bat") 
       
+      // Returns 0 because cat and dog don't rhyme
+      r.Rhymes("cat", "dog")
+      
+      // Returns -1 because yolo isn't in cmudict
+      r.Rhymes("cat", "yolo"
+      
       // Returns an array of strings that rhyme with "cat"
-      // It uses an arbitrary pronounciation of the word when there are multiple
       r.FindRhymesByWord("cat")
       
       // Return an array that rhymes with the second listed pronounciation of accept
