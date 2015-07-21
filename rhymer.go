@@ -12,51 +12,60 @@ type rhymer struct {
     dictionary map[string][][]string
 }
 
+// Get the pronounciation phonemes for string s
 func (r *rhymer) Pronounce(s string) [][]string {
     return r.dictionary[strings.ToUpper(s)]
 }
 
+// Find all words that rhyme with string s
 func (r *rhymer) FindRhymesByWord(s string) []string {
     s = strings.ToUpper(s)
     if _, ok := r.dictionary[s]; !ok {
         return []string{}
     }
-    return r.FindRhymes(r.dictionary[strings.ToUpper(s)][0])
+    return r.FindRhymes(r.dictionary[s][0])
 }
 
+// Find all words that rhyme with lost of pronounciation phonemes s
 func (r *rhymer) FindRhymes(s []string) []string {
+    // Strip away the leading constanant sounds
     var words []string
     toRhyme := s[vowelOffset(s):]
     minLen := len(toRhyme)
 
     for k, v := range r.dictionary {
-        if len(v[0]) < minLen {
-            continue
-        }
-        if rhymeTo(v[0], toRhyme) {
-            words = append(words, k)
+        for _, pronounce := range v {
+            // Make sure that the word we compare against is at least as long as the word we rhyme
+            if len(pronounce) < minLen {
+                continue
+            }
+            // Check if they rhyme
+            if rhymeTo(pronounce, toRhyme) {
+                words = append(words, k)
+            }
         }
     }
     return words
 }
 
+// Checks whether or not s1 and s2 rhyme, returns 1 if they do, 0 if they don't, and -1 when one word is unknown
 func (r *rhymer) Rhymes(s1, s2 string) int {
     s1 = strings.ToUpper(s1)
     s2 = strings.ToUpper(s2)
+    // Return -1 if one of the words is unknown
     if len(r.Pronounce(s1)) == 0 || len(r.Pronounce(s2)) == 0 {
         return -1
     }
 
-    rhymes := 0
-
+    // Return 1 if any of the prounounciations rhyme
     for _, v := range r.Pronounce(s1) {
         for _, w := range r.Pronounce(s2) {
             if rhymeToUnordered(v, w) {
-                rhymes = 1
+                return 1
             }
         }
     }
-    return rhymes
+    return 0
 }
 
 func vowelOffset(s []string) int {
@@ -107,6 +116,7 @@ func check(e error) {
     }
 }
 
+// Create a new rhymer by reading the pronounciation dictionary
 func NewRhymer() *rhymer {
     r := new(rhymer)
 
