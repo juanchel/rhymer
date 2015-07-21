@@ -1,6 +1,6 @@
 # rhymer
 
-Simple rhyming dictionary written in golang, powered by CMU's pronouncing dictionary.
+A very simple rhyming dictionary written in golang, powered by CMU's pronouncing dictionary.
 
     import (
       "rhymer"
@@ -25,9 +25,9 @@ Simple rhyming dictionary written in golang, powered by CMU's pronouncing dictio
       // Returns an array of strings that rhyme with "cat"
       r.FindRhymesByWord("cat")
       
-      // Return an array that rhymes with the second listed pronounciation of accept
+      // Return an array of strings that rhyme with the second listed pronounciation of accept
       r.FindRhymes(r.Pronounce("accept")[1])
       
-      // Returns an array that rhymes with the "acker" sound
+      // Returns an array of strings that rhyme with the "acker" sound
       r.FindRhymes([]string{"AA", "K", "ER"})
     }
