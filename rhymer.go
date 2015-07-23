@@ -107,7 +107,6 @@ func rhymeToUnordered(a1, a2 []string) bool {
     }
 
     return rhymeTo(longer, shorter)
-
 }
 
 func check(e error) {
