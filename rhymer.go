@@ -1,3 +1,5 @@
+// Rhyming dictionary in go
+
 package rhymer
 
 import (
@@ -121,7 +123,7 @@ func NewRhymer() *rhymer {
 
     // Read the file
     _, filename, _, _ := runtime.Caller(0)
-    file, err := os.Open(path.Join(path.Dir(filename), "cmudict", "cmudict"))
+    file, err := os.Open(path.Join(path.Dir(filename), "data", "cmudict"))
     check(err)
     scanner := bufio.NewScanner(file)
     defer file.Close()
