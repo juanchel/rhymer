@@ -20,8 +20,8 @@ A very simple rhyming dictionary written in golang, powered by CMU's pronouncing
       // Returns 0 because cat and dog don't rhyme
       r.Rhymes("cat", "dog")
       
-      // Returns -1 because yolo isn't in cmudict
-      r.Rhymes("cat", "yolo")
+      // Returns -1 because golang isn't in cmudict :(
+      r.Rhymes("cat", "golang")
       
       // Returns an array of strings that rhyme with "cat"
       r.FindRhymesByWord("cat")
