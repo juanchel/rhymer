@@ -54,14 +54,18 @@ func (r *rhymer) FindRhymes(s []string) []string {
 func (r *rhymer) Rhymes(s1, s2 string) int {
     s1 = strings.ToUpper(s1)
     s2 = strings.ToUpper(s2)
+
+    p1 := r.Pronounce(s1)
+    p2 := r.Pronounce(s2)
+
     // Return -1 if one of the words is unknown
-    if len(r.Pronounce(s1)) == 0 || len(r.Pronounce(s2)) == 0 {
+    if len(p1) == 0 || len(p2) == 0 {
         return -1
     }
 
     // Return 1 if any of the prounounciations rhyme
-    for _, v := range r.Pronounce(s1) {
-        for _, w := range r.Pronounce(s2) {
+    for _, v := range p1 {
+        for _, w := range p2 {
             if rhymeToUnordered(v, w) {
                 return 1
             }
