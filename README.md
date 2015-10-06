@@ -8,7 +8,7 @@ import (
 )
     
 func main() {
-  r = rhymer.Rhymer()
+  r := rhymer.Rhymer()
   
   // returns [[AE K S EH P T][AH K S EH P T]]
   // See the cmudict README for more information
