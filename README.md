@@ -1,5 +1,5 @@
 # rhymer
-
+```go
 A very simple rhyming dictionary written in golang, powered by CMU's pronouncing dictionary.
 
     import (
