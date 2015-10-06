@@ -127,7 +127,7 @@ func NewRhymer() *rhymer {
 
     // Read the file
     _, filename, _, _ := runtime.Caller(0)
-    file, err := os.Open(path.Join(path.Dir(filename), "data", "cmudict"))
+    file, err := os.Open(path.Join(path.Dir(filename), "data", "reduxdict"))
     check(err)
     scanner := bufio.NewScanner(file)
     defer file.Close()
@@ -139,12 +139,8 @@ func NewRhymer() *rhymer {
     for scanner.Scan() {
         // Split the line by whitespace
         f := strings.Fields(scanner.Text())
-        // Trim the stress numbers
-        for i, v := range f[2:] {
-            f[i+2] = strings.TrimRight(v, "012")
-        }
-        // f[0] is the string, and f[2:] is the pronounciation
-        r.dictionary[f[0]] = append(r.dictionary[f[0]], f[2:])
+        // f[0] is the string, and f[1:] is the pronounciation
+        r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
     }
 
     return r
