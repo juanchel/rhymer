@@ -8,7 +8,8 @@ import (
     "path"
 )
 
-func Redux() {
+// This function converts the cmudict into a slimmer format while throwing away information we don't need
+func redux() {
     r := new(rhymer)
 
     // Read the file
@@ -33,14 +34,17 @@ func Redux() {
         r.dictionary[f[0]] = append(r.dictionary[f[0]], f[2:])
     }
 
+    // Open new file for writing
     f, err := os.Create(path.Join(path.Dir(filename), "data", "reduxdict"))
     check(err)
     defer f.Close()
 
+    // For all words currently known
     for k, v := range r.dictionary {
         unique := make([][]string, 0)
         for _, pronounce := range v {
             skip := false
+            // Check to make sure we don't already have the same pronounciation
             for _, existing := range unique {
                 if samePhonemes(pronounce, existing) {
                     skip = true
@@ -56,6 +60,8 @@ func Redux() {
     f.Sync()
 }
 
+
+// This essentially checks if two arrays of strings are the same
 func samePhonemes(n, m []string) bool {
     if len(n) != len(m) {
         return false

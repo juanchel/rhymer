@@ -28,7 +28,7 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
     return r.FindRhymes(r.dictionary[s][0])
 }
 
-// Find all words that rhyme with lost of pronounciation phonemes s
+// Find all words that rhyme with slice of pronounciation phonemes
 func (r *rhymer) FindRhymes(s []string) []string {
     // Strip away the leading constanant sounds
     var words []string
@@ -74,6 +74,7 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
     return 0
 }
 
+// Find how many phonemes the vowel is offset so we know where to start rhyming
 func vowelOffset(s []string) int {
     for i, v := range s {
         switch v[0] {
@@ -122,7 +123,7 @@ func check(e error) {
 }
 
 // Create a new rhymer by reading the pronounciation dictionary
-func NewRhymer() *rhymer {
+func Rhymer() *rhymer {
     r := new(rhymer)
 
     // Read the file
