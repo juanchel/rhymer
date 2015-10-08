@@ -32,6 +32,13 @@ var rhymeTests = []struct {
     {"^cat",   "&bat",    -1},
 }
 
+var pronounceTests = []struct {
+    a string          // input
+    expected []string // expected result
+} {
+    {"cat", }
+}
+
 func TestMain(m *testing.M) {
     os.Exit(m.Run())
 }
@@ -44,3 +51,9 @@ func TestRhymes(m *testing.T) {
         }
     }
 }
+
+func TestPronounce(m *testing.T) {
+
+}
+
+func 
