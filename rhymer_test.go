@@ -72,10 +72,10 @@ func TestPronounceMultiple(m *testing.T) {
     } else {
         for i := range actual[0] {
             if actual[0][i] != expectedA[i] && actual[0][i] != expectedB[i] {
-                m.Errorf("Pronounce(aunt) returned the wrong phoneme: got %v, expected [[%v] [%v]]", actual, expectedA, expectedB)
+                m.Errorf("Pronounce(aunt) returned the wrong phoneme: got %v, expected [%v %v]", actual, expectedA, expectedB)
             }
             if actual[1][i] != expectedA[i] && actual[1][i] != expectedB[i] {
-                m.Errorf("Pronounce(aunt) returned the wrong phoneme: got %v, expected [[%v] [%v]]", actual, expectedA, expectedB)
+                m.Errorf("Pronounce(aunt) returned the wrong phoneme: got %v, expected [%v %v]", actual, expectedA, expectedB)
             }
         }
     }
@@ -85,5 +85,33 @@ func TestPronounceNotFound(m *testing.T) {
     actual := r.Pronounce("naenae")
     if len(actual) != 0 {
         m.Errorf("Pronounce(naenae) should have returned nothing but returned: %v", actual)
+    }
+    actual = r.Pronounce("!@#$^&")
+    if len(actual) != 0 {
+        m.Errorf("Pronounce(!@#$^&) should have returned nothing but returned: %v", actual)
+    }
+}
+
+func TestFindRhymes(m *testing.T) {
+    actualWord := r.FindRhymesByWord("crunk")
+    actualPhon := r.FindRhymes([]string{"AH", "NG", "K"})
+
+    if len(actualWord) != 54 {
+        m.Errorf("FindRhymesByWord(crunk) returned %d results, expected 54", len(actualWord))
+    }
+    if len(actualPhon) != 54 {
+        m.Errorf("FindRhymes([AH NG K]) returned %d results, expected 54", len(actualPhon))
+    }
+}
+
+func TestFindRhymesNotFound(m *testing.T) {
+    actualWord := r.FindRhymesByWord("abcd")
+    actualPhon := r.FindRhymes([]string{"AB CD"})
+
+    if len(actualWord) != 0 {
+        m.Errorf("FindRhymesByWord(abcd) returned %d results, expected 0", len(actualWord))
+    }
+    if len(actualPhon) != 0 {
+        m.Errorf("FindRhymes([AB CD]) returned %d results, expected 0", len(actualPhon))
     }
 }
