@@ -13,14 +13,23 @@ var rhymeTests = []struct {
     b string     // second input
     expected int // expected result
 } {
-    {"cat", "cat", 1},
-    {"cat", "bat", 1},
-    {"cat", "acrobat", 1},
-    {"over", "clover", 1},
-    {"master", "raster", 1},
-    {"cat", "dog", 0},
-    {"over", "ever", 0},
-    {"ever", "clover", 0},
+    {"cat",    "cat",     1},
+    {"cat",    "bat",     1},
+    {"cat",    "acrobat", 1},
+    {"over",   "clover",  1},
+    {"master", "raster",  1},
+    {"masTER", "RaStEr",  1},
+    {"aunt",   "rant",    1},
+    {"aunt",   "want",    1},
+    {"rant",   "want",    0},
+    {"cat",    "dog",     0},
+    {"over",   "ever",    0},
+    {"ever",   "clover",  0},
+    {"kanye",  "cat",     -1},
+    {"kanye",  "yeezy",   -1},
+    {"",       "cat",     -1},
+    {"",       "",        -1},
+    {"^cat",   "&bat",    -1},
 }
 
 func TestMain(m *testing.M) {
