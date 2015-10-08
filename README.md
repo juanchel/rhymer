@@ -1,4 +1,4 @@
-# rhymer
+# rhymer [![Build Status](https://travis-ci.org/juanchel/rhymer.svg?branch=master)](https://travis-ci.org/juanchel/rhymer)
 A very simple rhyming dictionary written in golang, powered by CMU's pronouncing dictionary.
 
     
