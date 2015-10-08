@@ -123,7 +123,7 @@ func check(e error) {
 }
 
 // Create a new rhymer by reading the pronounciation dictionary
-func Rhymer() *rhymer {
+func NewRhymer() *rhymer {
     r := new(rhymer)
 
     // Read the file
