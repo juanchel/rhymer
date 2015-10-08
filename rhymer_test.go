@@ -95,6 +95,16 @@ func TestPronounceNotFound(m *testing.T) {
 func TestFindRhymes(m *testing.T) {
     actualWord := r.FindRhymesByWord("crunk")
     actualPhon := r.FindRhymes([]string{"AH", "NG", "K"})
+    wordSet := make(map[string]bool)
+
+    for _, v := range actualWord {
+        wordSet[v] = true
+    }
+    for _, v := range actualPhon {
+        if !wordSet[v] {
+            m.Errorf("Mismatch in FindRhymesByWord(crunk) and FindRhymes([AH NG K])")
+        }
+    }
 
     if len(actualWord) != 54 {
         m.Errorf("FindRhymesByWord(crunk) returned %d results, expected 54", len(actualWord))
@@ -106,7 +116,7 @@ func TestFindRhymes(m *testing.T) {
 
 func TestFindRhymesNotFound(m *testing.T) {
     actualWord := r.FindRhymesByWord("abcd")
-    actualPhon := r.FindRhymes([]string{"AB CD"})
+    actualPhon := r.FindRhymes([]string{"T", "K", "O"})
 
     if len(actualWord) != 0 {
         m.Errorf("FindRhymesByWord(abcd) returned %d results, expected 0", len(actualWord))

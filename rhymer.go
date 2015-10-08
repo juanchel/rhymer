@@ -10,8 +10,45 @@ import (
     "path"
 )
 
+type phonTrie struct {
+    leaves map[string]*phonTrie
+    words map[string]bool
+}
+
 type rhymer struct {
     dictionary map[string][][]string
+    trie phonTrie
+}
+
+// Create a new rhymer by reading the pronounciation dictionary
+func NewRhymer() *rhymer {
+    r := new(rhymer)
+
+    // Read the file
+    _, filename, _, _ := runtime.Caller(0)
+    file, err := os.Open(path.Join(path.Dir(filename), "data", "reduxdict"))
+    check(err)
+    scanner := bufio.NewScanner(file)
+    defer file.Close()
+    check(err)
+
+    r.dictionary = make(map[string][][]string)
+    r.trie.leaves = make(map[string]*phonTrie)
+
+    // Scan the file line by line
+    for scanner.Scan() {
+        // Split the line by whitespace
+        f := strings.Fields(scanner.Text())
+        // f[0] is the string, and f[1:] is the pronounciation
+        r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
+
+        // cur := r.trie
+        // for i := len(f)-1; i >= 0; i-- {
+            
+        // }
+    }
+
+    return r
 }
 
 // Get the pronounciation phonemes for string s
@@ -32,7 +69,13 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
 func (r *rhymer) FindRhymes(s []string) []string {
     // Strip away the leading constanant sounds
     var words []string
-    toRhyme := s[vowelOffset(s):]
+
+    // Calculate the offset, if it's the error case, we return empty because there's no vowel sounds
+    offset := vowelOffset(s)
+    if offset == -1 {
+        return []string{}
+    }
+    toRhyme := s[offset:]
     minLen := len(toRhyme)
 
     for k, v := range r.dictionary {
@@ -120,29 +163,4 @@ func check(e error) {
     if e != nil {
         panic(e)
     }
-}
-
-// Create a new rhymer by reading the pronounciation dictionary
-func NewRhymer() *rhymer {
-    r := new(rhymer)
-
-    // Read the file
-    _, filename, _, _ := runtime.Caller(0)
-    file, err := os.Open(path.Join(path.Dir(filename), "data", "reduxdict"))
-    check(err)
-    scanner := bufio.NewScanner(file)
-    defer file.Close()
-    check(err)
-
-    r.dictionary = make(map[string][][]string)
-
-    // Scan the file line by line
-    for scanner.Scan() {
-        // Split the line by whitespace
-        f := strings.Fields(scanner.Text())
-        // f[0] is the string, and f[1:] is the pronounciation
-        r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
-    }
-
-    return r
 }
