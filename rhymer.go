@@ -62,6 +62,26 @@ func NewRhymer() *rhymer {
     return r
 }
 
+func RhymesFullPhonetic(a1, a2 []string) bool {
+    // Find the word with less rhymable phonemes
+    var longer []string
+    var shorter []string
+
+    if vowelOffset(a1) == -1 || vowelOffset(a2) == -1 {
+        return false
+    }
+
+    if len(a1)-vowelOffset(a1) > len(a2)-vowelOffset(a2) {
+        longer = a1
+        shorter = a2
+    } else {
+        longer = a2
+        shorter = a1
+    }
+
+    return rhymeTo(longer, shorter)
+}
+
 // Reduce phonemes to the rhyming part
 func RhymeReduce(phon []string) []string {
     var res []string
@@ -80,6 +100,36 @@ func RhymeReduce(phon []string) []string {
     return res
 }
 
+// Reduce phonemes to the very last rhymable chain
+func SyllabicReduce(phon []string) []string {
+    if len(phon) == 0 {
+        return []string{}
+    }
+    var res []string
+    vowelFound := false
+    for i := len(phon) - 1; i >= 0; i-- {
+        if len(phon[i]) == 0 {
+            return []string{}
+        }
+        switch phon[i][0] {
+        case 'A', 'E', 'I', 'O', 'U':
+            vowelFound = true
+            res = append([]string{phon[i]}, res...)
+        default:
+            if vowelFound {
+                return res
+            }
+            res = append([]string{phon[i]}, res...)
+        }
+    }
+    if vowelFound {
+        return res
+    } else {
+        return []string{}
+    }
+}
+
+// Find all words that rhyme with slice of pronounciation phonemes
 func (r *rhymer) FindRhymes(s []string) []string {
     rhymeSound := RhymeReduce(s)
     cur := &r.trie
@@ -107,32 +157,21 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
     return r.FindRhymes(r.dictionary[s][0])
 }
 
-// Find all words that rhyme with slice of pronounciation phonemes
-func (r *rhymer) FindRhymesSequential(s []string) []string {
-    // Strip away the leading constanant sounds
-    var words []string
+// Checks wheter s rhymes with a phoneme slice p1
+func (r *rhymer) RhymesToPhonetic(s string, p1 []string) int {
+    s = strings.ToUpper(s)
+    p2 := r.Pronounce(s)
 
-    // Calculate the offset, if it's the error case, we return empty because there's no vowel sounds
-    offset := vowelOffset(s)
-    if offset == -1 {
-        return []string{}
+    if len(p2) == 0 {
+        return -1
     }
-    toRhyme := s[offset:]
-    minLen := len(toRhyme)
 
-    for k, v := range r.dictionary {
-        for _, pronounce := range v {
-            // Make sure that the word we compare against is at least as long as the word we rhyme
-            if len(pronounce) < minLen {
-                continue
-            }
-            // Check if they rhyme
-            if rhymeTo(pronounce, toRhyme) {
-                words = append(words, k)
-            }
+    for _, v := range p2 {
+        if RhymesFullPhonetic(v, p1) {
+            return 1
         }
     }
-    return words
+    return 0
 }
 
 // Checks whether or not s1 and s2 rhyme, returns 1 if they do, 0 if they don't, and -1 when one word is unknown
@@ -151,7 +190,7 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
     // Return 1 if any of the prounounciations rhyme
     for _, v := range p1 {
         for _, w := range p2 {
-            if rhymeToUnordered(v, w) {
+            if RhymesFullPhonetic(v, w) {
                 return 1
             }
         }
@@ -174,6 +213,9 @@ func (p *phonTrie) getFullSet() []string {
 // Find how many phonemes the vowel is offset so we know where to start rhyming
 func vowelOffset(s []string) int {
     for i, v := range s {
+        if len(v) == 0 {
+            return -1
+        }
         switch v[0] {
         case 'A', 'E', 'I', 'O', 'U':
             return i
@@ -187,6 +229,9 @@ func rhymeTo(l, s []string) bool {
     ret := true
 
     offset := vowelOffset(s)
+    if offset == -1 {
+        return false
+    }
 
     // Check if the words sound the same, ignoring the first constanant sounds of the shorter word
     for i, v := range s[offset:] {
@@ -196,21 +241,6 @@ func rhymeTo(l, s []string) bool {
     }
 
     return ret
-}
-
-func rhymeToUnordered(a1, a2 []string) bool {
-    // Find the word with less rhymable phonemes
-    var longer []string
-    var shorter []string
-    if len(a1)-vowelOffset(a1) > len(a2)-vowelOffset(a2) {
-        longer = a1
-        shorter = a2
-    } else {
-        longer = a2
-        shorter = a1
-    }
-
-    return rhymeTo(longer, shorter)
 }
 
 func check(e error) {

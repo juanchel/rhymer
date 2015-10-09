@@ -14,6 +14,7 @@ var rhymeTests = []struct {
     expected int // expected result
 } {
     {"cat",    "cat",     1},
+    {"do",     "to",      1},
     {"cat",    "bat",     1},
     {"cat",    "acrobat", 1},
     {"over",   "clover",  1},
@@ -22,6 +23,7 @@ var rhymeTests = []struct {
     {"aunt",   "rant",    1},
     {"aunt",   "want",    1},
     {"rant",   "want",    0},
+    {"do",     "toot",    0},
     {"cat",    "dog",     0},
     {"over",   "ever",    0},
     {"ever",   "clover",  0},
@@ -30,6 +32,34 @@ var rhymeTests = []struct {
     {"",       "cat",     -1},
     {"",       "",        -1},
     {"^cat",   "&bat",    -1},
+}
+
+var phoneticRhymeTests = []struct {
+    a string     // first input
+    b []string   // second input
+    expected int // expected input
+} {
+    {"cat",   []string{"AE", "T"},            1},
+    {"cat",   []string{"S", "AE", "T"},       1},
+    {"cat",   []string{"???", "AE", "T"},     1},
+    {"hello", []string{"Y", "EH", "L", "OW"}, 1},
+    {"cat",   []string{"AE"},                 0},
+    {"cat",   []string{"T"},                  0},
+    {"cat",   []string{""},                   0},
+    {"cat",   []string{"???"},                0},
+    {"kanye", []string{"AY"},                 -1},
+}
+
+var syllabicReduceTests = []struct {
+    a []string        // input
+    expected []string // expected
+} {
+    {[]string{"K", "AE", "T"}, []string{"AE", "T"}},
+    {[]string{"K", "AE", "K", "AE", "T"}, []string{"AE", "T"}},
+    {[]string{"AE", "T"}, []string{"AE", "T"}},
+    {[]string{"T", "T"}, []string{}},
+    {[]string{""}, []string{}},
+    {[]string{"&&"}, []string{}},
 }
 
 func TestMain(m *testing.M) {
@@ -41,6 +71,30 @@ func TestRhymes(m *testing.T) {
         actual := r.Rhymes(i.a, i.b)
         if actual != i.expected {
             m.Errorf("Rhymes(%s, %s): expected %d but got %d", i.a, i.b, i.expected, actual)
+        }
+    }
+}
+
+func TestRhymesToPhonetic(m *testing.T) {
+    for _, i := range phoneticRhymeTests {
+        actual := r.RhymesToPhonetic(i.a, i.b)
+        if actual != i.expected {
+            m.Errorf("RhymesToPhonetic(%s, %v): expected %d but got %d", i.a, i.b, i.expected, actual)
+        }
+    }
+}
+
+func TestSyllabicReduce(m *testing.T) {
+    for _, i := range syllabicReduceTests {
+        actual := rhymer.SyllabicReduce(i.a)
+        if len(actual) != len(i.expected) {
+            m.Errorf("SyllabicReduce(%v) returned the wrong number of phonemes: %v, expected %v", i.a, actual, i.expected)
+        } else {
+            for n, v := range actual {
+                if v != i.expected[n] {
+                    m.Errorf("SyllabicReduce(%v) returned the wrong results: %v, expected %v", i.a, actual, i.expected)
+                }
+            }
         }
     }
 }
