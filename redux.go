@@ -61,7 +61,7 @@ func redux() {
 }
 
 
-// This essentially checks if two arrays of strings are the same
+// This essentially checks if two arrays of strings are the same value
 func samePhonemes(n, m []string) bool {
     if len(n) != len(m) {
         return false

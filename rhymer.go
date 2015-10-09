@@ -39,16 +39,58 @@ func NewRhymer() *rhymer {
     for scanner.Scan() {
         // Split the line by whitespace
         f := strings.Fields(scanner.Text())
+
+        // Build the dictionary for quick lookups
         // f[0] is the string, and f[1:] is the pronounciation
         r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
 
-        // cur := r.trie
-        // for i := len(f)-1; i >= 0; i-- {
-            
-        // }
-    }
+        // Reduce the word to the rhyming part for trie insertion
+        rhymeSound := RhymeReduce(f[1:])
 
+        // Insert the word into the trie
+        cur := &r.trie
+        for i := len(rhymeSound)-1; i >= 0; i-- {
+            if cur.leaves[rhymeSound[i]] == nil {
+                cur.leaves[rhymeSound[i]] = &phonTrie{make(map[string]*phonTrie), make(map[string]bool)}
+            }
+            cur = cur.leaves[rhymeSound[i]]
+            if i == 0 {
+                cur.words[f[0]] = true
+            }
+        }
+    }
     return r
+}
+
+// Reduce phonemes to the rhyming part
+func RhymeReduce(phon []string) []string {
+    var res []string
+    vowelFound := false
+    for _, v := range phon {
+        if !vowelFound {
+            switch v[0] {
+            case 'A', 'E', 'I', 'O', 'U':
+                vowelFound = true
+                res = []string{v}
+            }
+        } else {
+            res = append(res, v)
+        }
+    }
+    return res
+}
+
+func (r *rhymer) FindRhymes(s []string) []string {
+    rhymeSound := RhymeReduce(s)
+    cur := &r.trie
+    for i := len(rhymeSound)-1; i >= 0; i-- {
+        if cur.leaves[rhymeSound[i]] != nil {
+            cur = cur.leaves[rhymeSound[i]]
+        } else {
+            return []string{}
+        }
+    }
+    return cur.getFullSet()
 }
 
 // Get the pronounciation phonemes for string s
@@ -66,7 +108,7 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
 }
 
 // Find all words that rhyme with slice of pronounciation phonemes
-func (r *rhymer) FindRhymes(s []string) []string {
+func (r *rhymer) FindRhymesSequential(s []string) []string {
     // Strip away the leading constanant sounds
     var words []string
 
@@ -117,12 +159,24 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
     return 0
 }
 
+// This returns a slice of all the words at the current level of a slice and recurses on its children
+func (p *phonTrie) getFullSet() []string {
+    res := []string{}
+    for k, _ := range p.words {
+        res = append(res, k)
+    }
+    for _, v := range p.leaves {
+        res = append(res, v.getFullSet()...)
+    }
+    return res
+}
+
 // Find how many phonemes the vowel is offset so we know where to start rhyming
 func vowelOffset(s []string) int {
     for i, v := range s {
         switch v[0] {
-            case 'A', 'E', 'I', 'O', 'U':
-                return i
+        case 'A', 'E', 'I', 'O', 'U':
+            return i
         }
     }
     return -1
