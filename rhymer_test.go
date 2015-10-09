@@ -31,7 +31,8 @@ var rhymeTests = []struct {
     {"kanye",  "yeezy",   -1},
     {"",       "cat",     -1},
     {"",       "",        -1},
-    {"^cat",   "&bat",    -1},
+    {"^^^",    "&&&ttt",  -1},
+    {"好き", "嫌い", -1},
 }
 
 var phoneticRhymeTests = []struct {
@@ -47,7 +48,10 @@ var phoneticRhymeTests = []struct {
     {"cat",   []string{"T"},                  0},
     {"cat",   []string{""},                   0},
     {"cat",   []string{"???"},                0},
+    {"",      []string{"???"},                -1},
     {"kanye", []string{"AY"},                 -1},
+    {"cat", []string{"再见"}, 0},
+    {"kanye", []string{"你好"}, -1},
 }
 
 var syllabicReduceTests = []struct {
@@ -60,6 +64,7 @@ var syllabicReduceTests = []struct {
     {[]string{"T", "T"}, []string{}},
     {[]string{""}, []string{}},
     {[]string{"&&"}, []string{}},
+    {[]string{"🔥"}, []string{}},
 }
 
 func TestMain(m *testing.M) {
