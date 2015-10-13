@@ -87,6 +87,9 @@ func RhymeReduce(phon []string) []string {
     var res []string
     vowelFound := false
     for _, v := range phon {
+        if len(v) == 0 {
+            return res
+        }
         if !vowelFound {
             switch v[0] {
             case 'A', 'E', 'I', 'O', 'U':
