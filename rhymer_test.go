@@ -63,6 +63,8 @@ var reduceTests = []struct {
     {[]string{"K", "AE", "K", "AE", "T"}, []string{"AE", "T"}, []string{"AE", "K", "AE", "T"}},
     {[]string{"AE", "T"}, []string{"AE", "T"}, []string{"AE", "T"}},
     {[]string{"T", "T"}, []string{}, []string{}},
+    {[]string{"K" ,"AE"}, []string{"AE"}, []string{"AE"}},
+    {[]string{"AE"}, []string{"AE"}, []string{"AE"}},
     {[]string{""}, []string{}, []string{}},
     {[]string{"&&"}, []string{}, []string{}},
     {[]string{"🔥🔥🔥😂😂😂"}, []string{}, []string{}},
