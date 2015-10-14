@@ -81,11 +81,11 @@ func TestRhymes(m *testing.T) {
     }
 }
 
-func TestRhymesToPhonetic(m *testing.T) {
+func TestRhymesPhonetic(m *testing.T) {
     for _, i := range phoneticRhymeTests {
-        actual := r.RhymesToPhonetic(i.a, i.b)
+        actual := r.RhymesPhonetic(i.a, i.b)
         if actual != i.expected {
-            m.Errorf("RhymesToPhonetic(%s, %v): expected %d but got %d", i.a, i.b, i.expected, actual)
+            m.Errorf("RhymesPhonetic(%s, %v): expected %d but got %d", i.a, i.b, i.expected, actual)
         }
     }
 }

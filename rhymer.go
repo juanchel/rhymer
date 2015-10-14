@@ -62,6 +62,7 @@ func NewRhymer() *rhymer {
     return r
 }
 
+// Rhymes two phoneme slices
 func RhymesFullPhonetic(a1, a2 []string) bool {
     // Find the word with less rhymable phonemes
     var longer []string
@@ -161,7 +162,7 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
 }
 
 // Checks wheter s rhymes with a phoneme slice p1
-func (r *rhymer) RhymesToPhonetic(s string, p1 []string) int {
+func (r *rhymer) RhymesPhonetic(s string, p1 []string) int {
     s = strings.ToUpper(s)
     p2 := r.Pronounce(s)
 
