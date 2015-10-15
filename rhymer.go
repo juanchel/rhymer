@@ -15,14 +15,14 @@ type phonTrie struct {
 	words  map[string]bool
 }
 
-type rhymer struct {
+type Rhymer struct {
 	dictionary map[string][][]string
 	trie       phonTrie
 }
 
-// Create a new rhymer by reading the pronunciation dictionary.
-func NewRhymer() *rhymer {
-	r := new(rhymer)
+// Create a new Rhymer by reading the pronunciation dictionary.
+func NewRhymer() *Rhymer {
+	r := new(Rhymer)
 
 	// Read the file.
 	_, filename, _, _ := runtime.Caller(0)
@@ -45,7 +45,7 @@ func NewRhymer() *rhymer {
 		r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
 
 		// Reduce the word to the rhyming part for trie insertion.
-		rhymeSound := RhymeReduce(f[1:])
+		rhymeSound := Rhymereduce(f[1:])
 
 		// Insert the word into the trie.
 		cur := &r.trie
@@ -84,7 +84,7 @@ func RhymesFullPhonetic(a1, a2 []string) bool {
 }
 
 // Reduce a slice of phonemes to the section that would be required to match when checking for rhymes.
-func RhymeReduce(phon []string) []string {
+func Rhymereduce(phon []string) []string {
 	var res []string
 	vowelFound := false
 	for _, v := range phon {
@@ -134,8 +134,8 @@ func SyllabicReduce(phon []string) []string {
 }
 
 // Returns a slice of strings that contain all known words that rhyme with a phoneme slice s.
-func (r *rhymer) FindRhymes(s []string) []string {
-	rhymeSound := RhymeReduce(s)
+func (r *Rhymer) FindRhymes(s []string) []string {
+	rhymeSound := Rhymereduce(s)
 	cur := &r.trie
 	for i := len(rhymeSound) - 1; i >= 0; i-- {
 		if cur.leaves[rhymeSound[i]] != nil {
@@ -148,12 +148,12 @@ func (r *rhymer) FindRhymes(s []string) []string {
 }
 
 // Returns a slice that contains the various possible pronunciations of string s. Each slice contains a slice of strings that represent the phonemes that make up the pronunciation.
-func (r *rhymer) Pronounce(s string) [][]string {
+func (r *Rhymer) Pronounce(s string) [][]string {
 	return r.dictionary[strings.ToUpper(s)]
 }
 
 // Returns a slice of strings that contain all known words that rhyme with any pronunciation of string s.
-func (r *rhymer) FindRhymesByWord(s string) []string {
+func (r *Rhymer) FindRhymesByWord(s string) []string {
 	s = strings.ToUpper(s)
 	if _, ok := r.dictionary[s]; !ok {
 		return []string{}
@@ -162,7 +162,7 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
 }
 
 // Checks whether or not string s rhymes with a phoneme slice p1. Returns 1 if they do, 0 if they don't, and -1 if one or more of the words are unknown.
-func (r *rhymer) RhymesPhonetic(s string, p1 []string) int {
+func (r *Rhymer) RhymesPhonetic(s string, p1 []string) int {
 	s = strings.ToUpper(s)
 	p2 := r.Pronounce(s)
 
@@ -179,7 +179,7 @@ func (r *rhymer) RhymesPhonetic(s string, p1 []string) int {
 }
 
 // Checks whether or not strings s1 and s2 rhyme. Returns 1 if they do, 0 if they don't, and -1 if one or more of the words are unknown.
-func (r *rhymer) Rhymes(s1, s2 string) int {
+func (r *Rhymer) Rhymes(s1, s2 string) int {
 	s1 = strings.ToUpper(s1)
 	s2 = strings.ToUpper(s2)
 

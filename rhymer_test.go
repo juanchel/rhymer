@@ -107,15 +107,15 @@ func TestSyllabicReduce(m *testing.T) {
 	}
 }
 
-func TestRhymeReduce(m *testing.T) {
+func TestRhymereduce(m *testing.T) {
 	for _, i := range reduceTests {
-		actual := rhymer.RhymeReduce(i.a)
+		actual := rhymer.Rhymereduce(i.a)
 		if len(actual) != len(i.rhyme) {
-			m.Errorf("RhymeReduce(%v) returned the wrong number of phonemes: %v, expected %v", i.a, actual, i.rhyme)
+			m.Errorf("Rhymereduce(%v) returned the wrong number of phonemes: %v, expected %v", i.a, actual, i.rhyme)
 		} else {
 			for n, v := range actual {
 				if v != i.rhyme[n] {
-					m.Errorf("RhymeReduce(%v) returned the wrong results: %v, expected %v", i.a, actual, i.rhyme)
+					m.Errorf("Rhymereduce(%v) returned the wrong results: %v, expected %v", i.a, actual, i.rhyme)
 				}
 			}
 		}

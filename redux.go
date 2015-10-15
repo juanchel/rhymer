@@ -10,7 +10,7 @@ import (
 
 // This function converts the cmudict into a slimmer format while throwing away information we don't need
 func redux() {
-	r := new(rhymer)
+	r := new(Rhymer)
 
 	// Read the file
 	_, filename, _, _ := runtime.Caller(0)
