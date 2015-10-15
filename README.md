@@ -15,7 +15,7 @@ import (
 )
     
 func main() {
-  r := rhymer.NewRhymer()
+  r := rhymer.New()
   // do stuff with r
 }
 ```
@@ -61,15 +61,15 @@ r.FindRhymes([]string{"AA", "K", "ER"})
 ```
 
 The library also provides a few simple methods for manipulating slices of phonemes. These are called from the rhymer package, not the object:
- - If you want to reduce a slice down to the rhyming portion, you can call `RhymeReduce`, which would reduce the phonemes of "wombat" to "ombat".
+ - If you want to reduce a slice down to the rhyming portion, you can call `RhymerReduce`, which would reduce the phonemes of "wombat" to "ombat".
  - If you want to reduce a slice down to the very last rhymable syllable, you can call `SyllabicReduce`, which would reduce the phoneme of "wombat" to "at".
 
 ```go
 // Returns [AA M B AE T]
-rhymer.RhymeReduce(r.Pronounce("wombat")[0])
+rhymer.RhymerReduce(r.Pronounce("wombat")[0])
 
 // Returns [AE T]
-rhymer.RhymeReduce(r.Pronounce("wombat")[0])
+rhymer.RhymerReduce(r.Pronounce("wombat")[0])
 ```
 
 ### Usage Notes

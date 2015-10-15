@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var r = rhymer.NewRhymer()
+var r = rhymer.New()
 
 var rhymeTests = []struct {
 	a        string // first input
@@ -107,15 +107,15 @@ func TestSyllabicReduce(m *testing.T) {
 	}
 }
 
-func TestRhymereduce(m *testing.T) {
+func TestRhymerReduce(m *testing.T) {
 	for _, i := range reduceTests {
-		actual := rhymer.Rhymereduce(i.a)
+		actual := rhymer.RhymerReduce(i.a)
 		if len(actual) != len(i.rhyme) {
-			m.Errorf("Rhymereduce(%v) returned the wrong number of phonemes: %v, expected %v", i.a, actual, i.rhyme)
+			m.Errorf("RhymerReduce(%v) returned the wrong number of phonemes: %v, expected %v", i.a, actual, i.rhyme)
 		} else {
 			for n, v := range actual {
 				if v != i.rhyme[n] {
-					m.Errorf("Rhymereduce(%v) returned the wrong results: %v, expected %v", i.a, actual, i.rhyme)
+					m.Errorf("RhymerReduce(%v) returned the wrong results: %v, expected %v", i.a, actual, i.rhyme)
 				}
 			}
 		}

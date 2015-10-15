@@ -15,13 +15,14 @@ type phonTrie struct {
 	words  map[string]bool
 }
 
+// Object that contains a dictionary and trie for quick access to pronuciations and words. Should be instantiated through the New() function.
 type Rhymer struct {
 	dictionary map[string][][]string
 	trie       phonTrie
 }
 
 // Create a new Rhymer by reading the pronunciation dictionary.
-func NewRhymer() *Rhymer {
+func New() *Rhymer {
 	r := new(Rhymer)
 
 	// Read the file.
@@ -45,7 +46,7 @@ func NewRhymer() *Rhymer {
 		r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
 
 		// Reduce the word to the rhyming part for trie insertion.
-		rhymeSound := Rhymereduce(f[1:])
+		rhymeSound := RhymerReduce(f[1:])
 
 		// Insert the word into the trie.
 		cur := &r.trie
@@ -84,7 +85,7 @@ func RhymesFullPhonetic(a1, a2 []string) bool {
 }
 
 // Reduce a slice of phonemes to the section that would be required to match when checking for rhymes.
-func Rhymereduce(phon []string) []string {
+func RhymerReduce(phon []string) []string {
 	var res []string
 	vowelFound := false
 	for _, v := range phon {
@@ -135,7 +136,7 @@ func SyllabicReduce(phon []string) []string {
 
 // Returns a slice of strings that contain all known words that rhyme with a phoneme slice s.
 func (r *Rhymer) FindRhymes(s []string) []string {
-	rhymeSound := Rhymereduce(s)
+	rhymeSound := RhymerReduce(s)
 	cur := &r.trie
 	for i := len(rhymeSound) - 1; i >= 0; i-- {
 		if cur.leaves[rhymeSound[i]] != nil {
