@@ -20,11 +20,11 @@ type rhymer struct {
 	trie       phonTrie
 }
 
-// Create a new rhymer by reading the pronunciation dictionary
+// Create a new rhymer by reading the pronunciation dictionary.
 func NewRhymer() *rhymer {
 	r := new(rhymer)
 
-	// Read the file
+	// Read the file.
 	_, filename, _, _ := runtime.Caller(0)
 	file, err := os.Open(path.Join(path.Dir(filename), "data", "reduxdict"))
 	check(err)
@@ -35,19 +35,19 @@ func NewRhymer() *rhymer {
 	r.dictionary = make(map[string][][]string)
 	r.trie.leaves = make(map[string]*phonTrie)
 
-	// Scan the file line by line
+	// Scan the file line by line.
 	for scanner.Scan() {
-		// Split the line by whitespace
+		// Split the line by whitespace.
 		f := strings.Fields(scanner.Text())
 
-		// Build the dictionary for quick lookups
-		// f[0] is the string, and f[1:] is the pronunciation
+		// Build the dictionary for quick lookups.
+		// f[0] is the string, and f[1:] is the pronunciation.
 		r.dictionary[f[0]] = append(r.dictionary[f[0]], f[1:])
 
-		// Reduce the word to the rhyming part for trie insertion
+		// Reduce the word to the rhyming part for trie insertion.
 		rhymeSound := RhymeReduce(f[1:])
 
-		// Insert the word into the trie
+		// Insert the word into the trie.
 		cur := &r.trie
 		for i := len(rhymeSound) - 1; i >= 0; i-- {
 			if cur.leaves[rhymeSound[i]] == nil {
@@ -62,9 +62,9 @@ func NewRhymer() *rhymer {
 	return r
 }
 
-// Rhymes two phoneme slices
+// Cheks whether or now two slices of phonemes rhyme. Returns 1 if they do and 0 if they don't.
 func RhymesFullPhonetic(a1, a2 []string) bool {
-	// Find the word with less rhymable phonemes
+	// Find the word with less rhymable phonemes.
 	var longer []string
 	var shorter []string
 
@@ -83,7 +83,7 @@ func RhymesFullPhonetic(a1, a2 []string) bool {
 	return rhymeTo(longer, shorter)
 }
 
-// Reduce phonemes to the rhyming part
+// Reduce a slice of phonemes to the section that would be required to match when checking for rhymes.
 func RhymeReduce(phon []string) []string {
 	var res []string
 	vowelFound := false
@@ -104,7 +104,7 @@ func RhymeReduce(phon []string) []string {
 	return res
 }
 
-// Reduce phonemes to the very last rhymable chain
+// Reduces a slice of phonemes to the very last rhymable chain.
 func SyllabicReduce(phon []string) []string {
 	if len(phon) == 0 {
 		return []string{}
@@ -133,7 +133,7 @@ func SyllabicReduce(phon []string) []string {
 	}
 }
 
-// Find all words that rhyme with slice of pronunciation phonemes
+// Returns a slice of strings that contain all known words that rhyme with a phoneme slice s.
 func (r *rhymer) FindRhymes(s []string) []string {
 	rhymeSound := RhymeReduce(s)
 	cur := &r.trie
@@ -147,12 +147,12 @@ func (r *rhymer) FindRhymes(s []string) []string {
 	return cur.getFullSet()
 }
 
-// Get the pronunciation phonemes for string s
+// Returns a slice that contains the various possible pronunciations of string s. Each slice contains a slice of strings that represent the phonemes that make up the pronunciation.
 func (r *rhymer) Pronounce(s string) [][]string {
 	return r.dictionary[strings.ToUpper(s)]
 }
 
-// Find all words that rhyme with string s
+// Returns a slice of strings that contain all known words that rhyme with any pronunciation of string s.
 func (r *rhymer) FindRhymesByWord(s string) []string {
 	s = strings.ToUpper(s)
 	if _, ok := r.dictionary[s]; !ok {
@@ -161,7 +161,7 @@ func (r *rhymer) FindRhymesByWord(s string) []string {
 	return r.FindRhymes(r.dictionary[s][0])
 }
 
-// Checks wheter s rhymes with a phoneme slice p1
+// Checks whether or not string s rhymes with a phoneme slice p1. Returns 1 if they do, 0 if they don't, and -1 if one or more of the words are unknown.
 func (r *rhymer) RhymesPhonetic(s string, p1 []string) int {
 	s = strings.ToUpper(s)
 	p2 := r.Pronounce(s)
@@ -178,7 +178,7 @@ func (r *rhymer) RhymesPhonetic(s string, p1 []string) int {
 	return 0
 }
 
-// Checks whether or not s1 and s2 rhyme, returns 1 if they do, 0 if they don't, and -1 when one word is unknown
+// Checks whether or not strings s1 and s2 rhyme. Returns 1 if they do, 0 if they don't, and -1 if one or more of the words are unknown.
 func (r *rhymer) Rhymes(s1, s2 string) int {
 	s1 = strings.ToUpper(s1)
 	s2 = strings.ToUpper(s2)
@@ -186,12 +186,12 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
 	p1 := r.Pronounce(s1)
 	p2 := r.Pronounce(s2)
 
-	// Return -1 if one of the words is unknown
+	// Return -1 if one of the words is unknown.
 	if len(p1) == 0 || len(p2) == 0 {
 		return -1
 	}
 
-	// Return 1 if any of the prounounciations rhyme
+	// Return 1 if any of the prounounciations rhyme.
 	for _, v := range p1 {
 		for _, w := range p2 {
 			if RhymesFullPhonetic(v, w) {
@@ -202,7 +202,7 @@ func (r *rhymer) Rhymes(s1, s2 string) int {
 	return 0
 }
 
-// This returns a slice of all the words at the current level of a slice and recurses on its children
+// Returns a slice of all the words at the current level of a slice and recurses on its children.
 func (p *phonTrie) getFullSet() []string {
 	res := []string{}
 	for k, _ := range p.words {
@@ -214,7 +214,7 @@ func (p *phonTrie) getFullSet() []string {
 	return res
 }
 
-// Find how many phonemes the vowel is offset so we know where to start rhyming
+// Finds how many phonemes the vowel is offset so we know where to start rhyming. Returns -1 if there are none.
 func vowelOffset(s []string) int {
 	for i, v := range s {
 		if len(v) == 0 {
@@ -237,7 +237,7 @@ func rhymeTo(l, s []string) bool {
 		return false
 	}
 
-	// Check if the words sound the same, ignoring the first constanant sounds of the shorter word
+	// Check if the words sound the same, ignoring the first constanant sounds of the shorter word.
 	for i, v := range s[offset:] {
 		if l[diff+i+offset] != v {
 			ret = false
