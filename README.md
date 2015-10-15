@@ -1,5 +1,5 @@
 # rhymer [![Build Status](https://travis-ci.org/juanchel/rhymer.svg?branch=master)](https://travis-ci.org/juanchel/rhymer)
-A simple pronounciation and rhyming library written in golang, powered by a streamlined version of CMU's pronoucniation dictionary.
+A simple pronunciation and rhyming library written in golang, powered by a streamlined version of CMU's pronoucniation dictionary.
 
 ### Installation
 
@@ -20,7 +20,7 @@ func main() {
 }
 ```
 
-You can recieve a slice of ways pronounce a word with `Pronounce`. Each member of the slice contains another slice of strings which contains the phonemes of each pronounciation.
+You can recieve a slice of ways pronounce a word with `Pronounce`. Each member of the slice contains another slice of strings which contains the phonemes of each pronunciation.
 
 ```go
 // Returns [[AE N T][AO N T]]
@@ -74,7 +74,7 @@ rhymer.RhymeReduce(r.Pronounce("wombat")[0])
 
 ### Usage Notes
 
-Note that `Rhymes` is not necessarily transitive because some words can be pronounced in different ways, e.g. "read" rhymes with "creed", and with "bed". This also means that the results of certain inputs to `FindRhymesByWord` will not all rhyme with each other. If you only want to use for a certain pronounciation of a word, you can use the functions that take in a slice of phonemes. You can easily access these slices through `Pronounce`.
+Note that `Rhymes` is not necessarily transitive because some words can be pronounced in different ways, e.g. "read" rhymes with "creed", and with "bed". This also means that the results of certain inputs to `FindRhymesByWord` will not all rhyme with each other. If you only want to use for a certain pronunciation of a word, you can use the functions that take in a slice of phonemes. You can easily access these slices through `Pronounce`.
 
 ### License
 
