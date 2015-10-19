@@ -7,7 +7,9 @@ A simple pronunciation and rhyming library written in golang, powered by a strea
     
 ### Usage
 
-Import the project and get a new rhymer
+You can view the godocs [here](https://godoc.org/github.com/juanchel/rhymer).
+
+Import the project and get a new rhymer.
 
 ```go
 import (
